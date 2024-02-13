@@ -6,6 +6,6 @@ export type CustomResponse = {
 };
 
 export type MagazineResponse = {
-  magazines: Magazine[];
+  data: Magazine[];
   totalRecords: number;
 };

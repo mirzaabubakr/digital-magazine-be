@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Magazine } from './entity/magazine.entity';
-import { ResourceNotFoundException } from 'src/common/exceptions/not-found.exception';
 import {
   CustomResponse,
   MagazineResponse,
 } from 'src/common/types/magazine.types';
 import { MagazineDto } from './dto/create-magazine.dto';
+import { ResourceNotFoundException } from '../../common/exceptions/not-found.exception';
 
 @Injectable()
 export class MagazineService {
@@ -28,22 +28,23 @@ export class MagazineService {
   ): Promise<MagazineResponse> {
     let magazineQuery = this.magazineRepository
       .createQueryBuilder('magazine')
-      .withDeleted()
       .orderBy('id', 'DESC');
 
     if (filter === 'current') {
       magazineQuery.where('magazine.subscribed = :subscribed', {
         subscribed: true,
       });
-    } else if (filter === 'previous') {
-      magazineQuery.where('magazine.deletedAt is not null');
+    } else if (filter === 'past') {
+      magazineQuery.where(
+        'magazine.subscribed is not null AND magazine.subscribed is false',
+      );
     }
     const [magazines, totalRecords] = await magazineQuery
       .skip((page - 1) * limit)
       .take(limit)
       .getManyAndCount();
 
-    return { magazines, totalRecords };
+    return { data: magazines, totalRecords };
   }
 
   async findOne(id: number): Promise<Magazine> {
@@ -58,8 +59,7 @@ export class MagazineService {
 
   async update(id: number, magazineData: MagazineDto): Promise<CustomResponse> {
     await this.magazineRepository.update(id, magazineData);
-    const updatedMagazine = await this.findOne(id);
-    return { message: 'Magazine Updated Successfully', data: updatedMagazine };
+    return { message: 'Magazine Updated Successfully' };
   }
 
   async softDelete(id: number): Promise<CustomResponse> {

@@ -45,6 +45,7 @@ export class MagazineController {
     @Param('id') id: number,
     @Body() magazineData: MagazineDto,
   ): Promise<CustomResponse> {
+    console.log(id);
     return this.magazineService.update(+id, magazineData);
   }
 

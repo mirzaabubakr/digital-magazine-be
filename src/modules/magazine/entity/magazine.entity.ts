@@ -16,14 +16,20 @@ export class Magazine {
   @Column()
   description: string;
 
-  @Column()
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   price: number;
 
   @Column()
   imgUrl: string;
 
-  @Column({ default: false })
+  @Column({ default: null })
   subscribed: boolean;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
+
+  @Column({ type: 'timestamp', default: null })
+  updatedAt: Date;
 
   @DeleteDateColumn({ nullable: true, default: null })
   deletedAt: Date;
