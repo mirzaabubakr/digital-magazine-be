@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { Magazine } from 'src/modules/magazine/entity/magazine.entity';
+import { Magazine } from '../../../modules/magazine/entity/magazine.entity';
 
 export const getOrmConfig = (configService: ConfigService) => ({
   type: configService.get('DB_TYPE'),
